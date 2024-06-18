@@ -30,4 +30,9 @@ sed "s#<absolute_path_to_here>#${BENCHMARK_HOME}#g" ./conf/dcmqrscp-template.cfg
 mkdir ../afl_exp
 mkdir ../snap_exp
 
+cd ./t_aflnet 
+make clean all
+
+sudo make install
+
 echo "Done!"
