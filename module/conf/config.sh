@@ -27,4 +27,7 @@ echo "Configuring DICOM benchmark"
 mkdir -p ./conf/ACME_STORE
 sed "s#<absolute_path_to_here>#${BENCHMARK_HOME}#g" ./conf/dcmqrscp-template.cfg >./conf/dcmqrscp.cfg
 
+mkdir ../afl_exp
+mkdir ../snap_exp
+
 echo "Done!"
