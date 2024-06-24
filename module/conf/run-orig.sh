@@ -50,6 +50,12 @@ ftp-asan)
   TARGET_CONF="./conf/fftp.conf 2200"
   TARGET_BINS=("./fftp-asan")
   ;;
+tls)
+  PROJECT_NAME="tls"
+  AFL_ARGS="-m none -d -i ./conf/in-tls -x ./conf/tls.dict -N tcp://127.0.0.1/4433 -P TLS -D 50000 -q 3 -s 3 -E -K -R -W 100"
+  TARGET_CONF=""
+  TARGET_BINS=("./openssl s_server -key ./key.pem -cert ./cert.pem -4 -naccept 1 -no_anti_replay")
+  ;;
 ftp-tsan)
   PROJECT_NAME="ftp-tsan"
   AFL_ARGS="-m none -i ./conf/in-ftp -N tcp://127.0.0.1/2200 -x ./conf/ftp.dict -P FTP -D 10000 -W 15 -q 3 -s 3 -E -R -c ./conf/ftpclean.sh"

@@ -45,7 +45,12 @@ dtls-asan)
   TARGET_CONF=""
   TARGET_BINS=("./dtls-server-asan")
   ;;
-
+tls)
+  PROJECT_NAME="tls"
+  AFL_ARGS="-m none -d -i ./conf/in-tls -x ./conf/tls.dict -P TLS -D 50000 -q 3 -s 3 -E -K -R -W 100"
+  TARGET_CONF=""
+  TARGET_BINS=("./openssl s_server -key ./key.pem -cert ./cert.pem -4 -naccept 1 -no_anti_replay")
+  ;;
 ftp)
   PROJECT_NAME="ftp"
   AFL_ARGS="-m 512 -i ./conf/in-ftp -x ./conf/ftp.dict -P FTP -t 10000 -q 3 -s 3 -E -R"
@@ -93,6 +98,6 @@ rtsp-asan)
 esac
 
 
-CMD="my-afl -A ./libsbr-afl.so ${AFL_ARGS} -o ${out_dir} ${TARGET_BINS} ${TARGET_CONF} "
+CMD="my-afl -A ./libsbr-afl.so -b ./libsbr-trace.so ${AFL_ARGS} -o ${out_dir} ${TARGET_BINS} ${TARGET_CONF} "
 eval $CMD
 

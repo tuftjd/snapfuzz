@@ -106,6 +106,7 @@ EXP_ST u8 *in_dir,                    /* Input directory with test cases  */
           *target_path,               /* Path to target binary            */
           *orig_cmdline,              /* Original command line            */
           *sbr_plugin_path;           /* Path to SaBRe's plugin to load   */
+          *sbr_sut_path;
 
 EXP_ST u32 exec_tmout = EXEC_TIMEOUT; /* Configurable exec timeout (ms)   */
 static u32 hang_tmout = EXEC_TIMEOUT; /* Timeout used for hang det (ms)   */
@@ -3723,8 +3724,26 @@ static u8 run_target(char** argv, u32 timeout) {
    truncated. */
 
 static void write_to_testcase(void* mem, u32 len) {
+  s32 fd = out_fd;
 
-  //AFLNet sends data via network so it does not need this function
+  if (out_file) {
+
+    unlink(out_file); /* Ignore errors. */
+
+    fd = open(out_file, O_WRONLY | O_CREAT | O_EXCL, 0600);
+
+    if (fd < 0) PFATAL("Unable to create '%s'", out_file);
+
+  } else lseek(fd, 0, SEEK_SET);
+
+  ck_write(fd, mem, len, out_file);
+
+  if (!out_file) {
+
+    if (ftruncate(fd, len)) PFATAL("ftruncate() failed");
+    lseek(fd, 0, SEEK_SET);
+
+  } else close(fd);
 
 }
 
@@ -9029,7 +9048,9 @@ static char** get_sbr_argv(char** argv, int argc) {
   new_argv[2] = "--";
   new_argv[1] = sbr_plugin_path;
   target_path = new_argv[0] = ck_strdup("./sabre");
-
+  for (int i = 0; new_argv[i] != NULL; i++) {
+        printf("new_argv[%d] = %s\n", i, new_argv[i]);
+    }
   return new_argv;
 }
 
@@ -9158,7 +9179,7 @@ int main(int argc, char** argv) {
   gettimeofday(&tv, &tz);
   srandom(tv.tv_sec ^ tv.tv_usec ^ getpid());
 
-  while ((opt = getopt(argc, argv, "+i:o:f:m:t:T:dnCB:S:M:x:QN:A:D:W:w:P:KEq:s:RFc:l:")) > 0)
+  while ((opt = getopt(argc, argv, "+i:o:f:m:t:T:dnCB:S:M:x:QN:A:b:D:W:w:P:KEq:s:RFc:l:")) > 0)
 
     switch (opt) {
 
@@ -9332,6 +9353,11 @@ int main(int argc, char** argv) {
 
         sbr_mode = 1;
         break;
+
+      case 'b':
+        sbr_sut_path = optarg;
+        break;
+
 
       case 'N': /* Network configuration */
         if (use_net) FATAL("Multiple -N options not supported");
@@ -9546,6 +9572,8 @@ int main(int argc, char** argv) {
     use_argv = get_qemu_argv(argv[0], argv + optind, argc - optind);
   else
     use_argv = argv + optind;
+  
+
 
   perform_dry_run(use_argv);
 

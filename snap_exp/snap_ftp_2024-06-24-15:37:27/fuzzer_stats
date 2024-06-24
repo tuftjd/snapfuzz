@@ -1,0 +1,30 @@
+start_time        : 1719214647
+last_update       : 1719214647
+fuzzer_pid        : 176550
+cycles_done       : 0
+execs_done        : 16
+execs_per_sec     : 0.00
+paths_total       : 2
+paths_favored     : 1
+paths_found       : 0
+paths_imported    : 0
+max_depth         : 1
+cur_path          : 0
+pending_favs      : 0
+pending_total     : 2
+variable_paths    : 0
+stability         : 0.00%
+bitmap_cvg        : 0.00%
+unique_crashes    : 0
+unique_hangs      : 0
+last_path         : 0
+last_crash        : 0
+last_hang         : 0
+execs_since_crash : 16
+exec_timeout      : 10000
+afl_banner        : fftp
+afl_version       : 2.56b
+target_mode       : sabre deferred 
+command_line      : my-afl -A ./libsbr-afl.so -m 512 -i ./conf/in-ftp -x ./conf/ftp.dict -P FTP -t 10000 -q 3 -s 3 -E -R -o ../snap_exp/snap_ftp_2024-06-24-15:37:27 ./fftp ./conf/fftp.conf 2200
+slowest_exec_ms   : 15
+peak_rss_mb       : not available while afl is running
